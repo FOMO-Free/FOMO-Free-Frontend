@@ -13,7 +13,7 @@ import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   PapersStyle: {
-      height: "60vh",
+      height: "35rem",
       width: "30rem",
       margin: "10% auto auto auto",
       zIndex:"2",
