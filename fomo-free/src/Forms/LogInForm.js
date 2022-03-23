@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   titleStyle: {
     fontSize: "5rem",
     textAlign: "center",
-    margin: "3rem auto 2rem auto"
+    margin: "3rem auto 1rem auto"
   },
   alertStyle: {
     height: "4rem"
@@ -63,7 +63,8 @@ const initialFormErrors = {
 };
 
 const initialDisabled = true;
-const formErrored = "none"
+const formErrored = "none";
+
 
 export default function SignInForm() {
   const classes = useStyles();
@@ -71,7 +72,7 @@ export default function SignInForm() {
   const [formValues, setFormValues] = useState(initialFormValues);
   const [formErrors, setFormErrors] = useState(initialFormErrors);
   const [disabled, setDisabled] = useState(initialDisabled);
-  const [formError, setFormError] = useState(formErrored)
+  const [formError, setFormError] = useState(formErrored);
 
   const validate = (name, value) => {
     yup
