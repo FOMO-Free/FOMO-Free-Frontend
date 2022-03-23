@@ -1,8 +1,14 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Grid, Paper, Button, TextField } from "@mui/material";
+import { Grid, Paper, Button, TextField, Alert, AlertTitle } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import Particles from "react-tsparticles";
+
+
+import { useHistory } from "react-router-dom";
+import * as yup from "yup";
+import schema from "../Validation/SignInSchema";
+import axios from "axios";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -17,150 +23,141 @@ const useStyles = makeStyles((theme) => ({
   titleStyle: {
     fontSize: "5rem",
     textAlign: "center",
+    margin: "3rem auto 2rem auto"
+  },
+  alertStyle: {
+    height: "4rem"
+  },
+  textFieldContainer: {
+    position: "relative"
   },
   textFieldStyle: {
     width: "70%",
     padding: "2px",
     
   },
+  buttonContainerStyle: {
+    display:"flex", 
+    flexDirection:"column", 
+    justifyContent:"center", 
+    alignContent:"center", 
+    textAlign:"center"
+  },
   ButtonStyle: {
     margin: "10rem auto auto auto",
-    height: "20%",
+    height: "3rem",
     width: "60%",
     borderRadius: "50px",
     fontSize: "1.75rem",
-  },
-  particles: {
-      width: "100%",
-      position: "fixed",
-      zIndex:"-1",
   }
 }));
 
+const initialFormValues = {
+  username: "",
+  password: "",
+};
 
-export default function SignInForm({ values, change, submit, disabled }) {
+const initialFormErrors = {
+  username: "",
+  password: "",
+};
+
+const initialDisabled = true;
+const formErrored = "none"
+
+export default function SignInForm() {
   const classes = useStyles();
+  const history = useHistory();
+  const [formValues, setFormValues] = useState(initialFormValues);
+  const [formErrors, setFormErrors] = useState(initialFormErrors);
+  const [disabled, setDisabled] = useState(initialDisabled);
+  const [formError, setFormError] = useState(formErrored)
+
+  const validate = (name, value) => {
+    yup
+      .reach(schema, name)
+      .validate(value)
+      .then((valid) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: "",
+        });
+      })
+      .catch((err) => {
+        setFormErrors({
+          ...formErrors,
+          [name]: err.errors[0],
+        });
+      });
+  };
+
+  const inputChange = (name, value) => {
+    validate(name, value);
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    schema.isValid(formValues).then((valid) => {
+      setDisabled(!valid);
+    });
+  }, [formValues]);
+
+  const logInUser = (userInformation) => {
+    axios
+      .post("https://fomo-free.herokuapp.com/api/auth/login", userInformation)
+      .then((res) => {
+        localStorage.setItem("token", res.data.token);
+        history.push("/home");
+      })
+      .catch((err) => {
+        console.log(err.response);
+        if(err.response.status = 401){
+          setFormError("")
+        }
+      })
+      ;
+  };
+
+  const formSubmit = () => {
+    const userInformation = {
+      username: formValues.username.trim(),
+      password: formValues.password.trim(),
+    };
+
+    logInUser(userInformation);
+  };
+
+
   const onSubmit = (evt) => {
     evt.preventDefault();
-    submit();
+    formSubmit();
   };
 
   const onChange = (evt) => {
     const { name, value } = evt.target;
-    change(name, value);
-  };
-
-  const particlesInit = (main) => {
-    console.log(main);
-  };
-
-  const particlesLoaded = (container) => {
-    console.log(container);
+    inputChange(name, value);
   };
 
 
   return (
-    <div>
-        <Particles
-          id="tsparticles"
-          init={particlesInit}
-          loaded={particlesLoaded}
-          className={classes.particles}
-          options={{
-            fpsLimit: 120,
-            background: {
-              color: {
-                value: "#99d8e4"
-              },
-              image: "",
-              position: "50% 50%",
-              repeat: "no-repeat",
-              size: "cover",
-              opacity: 1
-            },
-            interactivity: {
-              events: {
-                onClick: {
-                  enable: true,
-                  mode: "push",
-                },
-                onHover: {
-                  enable: true,
-                  mode: "repulse",
-                },
-                resize: true,
-              },
-              modes: {
-                bubble: {
-                  distance: 400,
-                  duration: 2,
-                  opacity: 0.8,
-                  size: 40,
-                },
-                push: {
-                  quantity: 4,
-                },
-                repulse: {
-                  distance: 200,
-                  duration: 0.4,
-                },
-              },
-            },
-            particles: {
-              color: {
-                value: "#fcbb4e",
-              },
-              links: {
-                color: "#ffffff",
-                distance: 150,
-                enable: true,
-                opacity: 0.5,
-                width: 1,
-              },
-              collisions: {
-                enable: false,
-              },
-              move: {
-                direction: "none",
-                enable: true,
-                outMode: "bounce",
-                random: false,
-                speed: 6,
-                straight: false,
-              },
-              number: {
-                density: {
-                  enable: true,
-                  area: 800,
-                },
-                value: 80,
-              },
-              opacity: {
-                value: 0.5,
-              },
-              shape: {
-                type: "circle",
-              },
-              size: {
-                random: true,
-                value: 5,
-              },
-            },
-            detectRetina: true,
-          }}
-        />
-        <form onSubmit={onSubmit} className={classes.Form}>
+        <form onSubmit={onSubmit} className={classes.Form} style={{zIndex:"2"}}>
             <Paper elevation={10} className={classes.PapersStyle}>
-                <Grid
-                container
-                justifyContent="space-around"
-                alignItems="center"
-                className="loginPage-grid-container"
-                >
-                <Grid item sm={10} xs={12}>
-                    <div className="loginPage-grid-item">
-                    <h2 className={classes.titleStyle}>Log In</h2>
+              <Grid container justifyContent="space-around" alignItems="center">
 
+                <Grid item sm={12} xs={12}>
+                    <h2 className={classes.titleStyle}>Log In</h2>
+                </Grid>
+
+                <Grid item sm={8} xs={12} className={classes.alertStyle}>
+                  <Alert severity="error" style={{display:formError, margin: "0 auto 1rem auto"}}>
+                      Email or Password is incorrect
+                    </Alert>
+                </Grid>
+
+                <Grid item sm={8} xs={9} className={classes.textFieldContainer}>
                     {/* username */}
                     <TextField
                         className={classes.textFieldStyle}
@@ -168,7 +165,7 @@ export default function SignInForm({ values, change, submit, disabled }) {
                         placeholder="Enter Username"
                         type="text"
                         name="username"
-                        value={values.username}
+                        value={formValues.username}
                         onChange={onChange}
                         fullWidth
                         style={{margin: "auto auto 2rem auto"}}
@@ -181,15 +178,14 @@ export default function SignInForm({ values, change, submit, disabled }) {
                         placeholder="Enter Password"
                         type="password"
                         name="password"
-                        value={values.password}
+                        value={formValues.password}
                         onChange={onChange}
                         fullWidth
                     />
-                    </div>
                 </Grid>
-
-                <Grid item sm={10} xs={12}>
-                    <div className="loginPage-grid-item" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignContent:"center", textAlign:"center"}}>
+                    
+                <Grid item sm={12} xs={12} className={classes.buttonContainerStyle}>
+                    
                     <Button
                         className={classes.ButtonStyle}
                         type="submit"
@@ -201,19 +197,19 @@ export default function SignInForm({ values, change, submit, disabled }) {
                     >
                         Log In
                     </Button>
+                </Grid>
 
+                <Grid item sm={12} xs={12} className={classes.buttonContainerStyle}>
                     <label style={{ fontSize: "1.5rem" }}>
                         New Member? 
                         <Link to="/signup">
                         <span style={{margin:"0 1rem"}}>Sign Up</span>
                         </Link>
                     </label>
-                    </div>
                 </Grid>
-                </Grid>
+
+              </Grid>
             </Paper>
         </form>
-    </div>
-    
   );
 }

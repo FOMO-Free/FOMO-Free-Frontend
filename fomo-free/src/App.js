@@ -12,7 +12,7 @@ export default function App() {
     <>
         <Router>
           <Switch>
-            {/* <Route path="/signup" component={SignUp} /> */}
+            <Route path="/signup" component={SignUp} />
             <Route path="/" component={LogIn} />
           </Switch>
         </Router>
