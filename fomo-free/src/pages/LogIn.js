@@ -1,4 +1,6 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import SignUpForm from "../Forms/SignUpForm";
 import LogInForm from "../Forms/LogInForm";
 import Particles from "react-tsparticles";
 import particlesConfig from "../assets/particles"
@@ -36,7 +38,12 @@ export default function SignIn() {
           className={classes.particles}
           options={particlesConfig}
         />
-      <LogInForm/>
+        <Router>
+          <Switch>
+            <Route path="/signup" component={SignUpForm} />
+            <Route path="/" component={LogInForm} />
+          </Switch>
+        </Router>
     </>
   );
 }
