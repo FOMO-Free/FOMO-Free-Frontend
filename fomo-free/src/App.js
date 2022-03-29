@@ -3,6 +3,7 @@ import React, { useState, useMemo } from "react";
 
 // import PrivateRoute from "./components/PrivateRoute";
 import LogIn from "./pages/LogIn";
+import Home from "./pages/Home"
 
 export default function App() {
   
@@ -11,6 +12,7 @@ export default function App() {
     <>
         <Router>
           <Switch>
+            <Route path="/home" component={Home} />
             <Route path="/" component={LogIn} />
           </Switch>
         </Router>

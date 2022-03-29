@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import SignUpForm from "../Forms/SignUpForm";
-import LogInForm from "../Forms/LogInForm";
+import SignUpForm from "../Components/SignUpForm";
+import LogInForm from "../Components/LogInForm";
 import Particles from "react-tsparticles";
 import particlesConfig from "../assets/particles"
 import { makeStyles } from "@mui/styles";

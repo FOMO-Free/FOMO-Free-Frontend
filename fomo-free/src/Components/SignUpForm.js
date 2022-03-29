@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
       height: "3rem",
       width: "60%",
       borderRadius: "50px",
-      fontSize: "1.75rem",
+      fontSize: "1.75rem"
     }
 }));
 
@@ -209,7 +209,7 @@ export default function SignUpForm() {
         </Grid>
 
         <Grid item sm={12} xs={12} className={classes.buttonContainerStyle}>
-            <label style={{ fontSize: "1.5rem" }}>
+            <label style={{ fontSize: "1.5rem" , marginTop: "1rem"}}>
               Already have an account?
               <Link to="/">
                 <span> Sign In</span>
